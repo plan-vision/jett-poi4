@@ -487,7 +487,7 @@ public class StyleParser
         {
             try
             {
-                style.setFontBoldweight(value.equals("BOLD"));
+                style.setFontBoldweight(value.equals("BOLD") || value.equals("TRUE"));
             }
             catch (IllegalArgumentException e)
             {
@@ -523,6 +523,12 @@ public class StyleParser
         }
         else if (PROPERTY_ALIGNMENT.equals(property))
         {
+        	
+        	/* TRANSLATE TODO MOVE */
+        	switch (value) 
+        	{
+        		case "CENTERSELECTION":          value="CENTER_SELECTION";break;
+        	}
             try
             {
                 style.setAlignment(HorizontalAlignment.valueOf(value));
@@ -534,6 +540,14 @@ public class StyleParser
         }
         else if (PROPERTY_BORDER.equals(property))
         {
+        	/* TRANSLATE TODO MOVE */
+        	switch(value) {
+        		case "DASHDOT" : 		  value="DASH_DOT";break;
+        		case "MEDIUMDASHDOT" :    value="MEDIUM_DASH_DOT";break;
+        		case "DASHDOTDOT" : 	  value="DASH_DOT_DOT";break;
+        		case "MEDIUMDASHDOTDOT" : value="MEDIUM_DASH_DOT_DOT";break;
+        		case "SLANTEDDASHDOT" :   value="SLANTED_DASH_DOT";break;
+        	}
             try
             {
                 BorderStyle bt = BorderStyle.valueOf(value);
@@ -587,8 +601,31 @@ public class StyleParser
         }
         else if (PROPERTY_FILL_PATTERN.equals(property))
         {
+        	/* TRANSLATE TODO MOVE */
             try
             {
+            	switch (value) 
+            	{
+            		case "NOFILL":                   value="NO_FILL";break;
+            		case "SOLID":                    value="SOLID_FOREGROUND";break;
+            		case "GRAY50PERCENT":            value="FINE_DOTS";break;
+            		case "GRAY75PERCENT":            value="ALT_BARS";break;
+            		case "GRAY25PERCENT":            value="SPARSE_DOTS";break;
+            		case "HORIZONTALSTRIPE":         value="THICK_HORZ_BANDS";break;
+            		case "VERTICALSTRIPE":           value="THICK_VERT_BANDS";break;
+            		case "REVERSEDIAGONALSTRIPE":    value="THICK_BACKWARD_DIAG";break;
+            		case "DIAGONALSTRIPE":           value="THICK_FORWARD_DIAG";break;
+            		case "DIAGONALCROSSHATCH":       value="BIG_SPOTS";break;
+            		case "THICKDIAGONALCROSSHATCH":  value="BRICKS";break;
+            		case "THINHORIZONTALSTRIPE":     value="THIN_HORZ_BANDS";break;
+            		case "THINVERTICALSTRIPE":       value="THIN_VERT_BANDS";break;
+            		case "THINREVERSEDIAGONALSTRIPE":value="THIN_BACKWARD_DIAG";break;
+            		case "THINDIAGONALSTRIPE":       value="THIN_FORWARD_DIAG";break;
+            		case "THINHORIZONTALCROSSHATCH": value="SQUARES";break;
+            		case "THINDIAGONALCROSSHATCH":   value="DIAMONDS";break;
+            		case "GRAY12PERCENT":            value="LESS_DOTS";break;
+            		case "GRAY6PERCENT":             value="LEAST_DOTS";break;
+            	}
                 style.setFillPatternType(FillPatternType.valueOf(value));
             }
             catch (IllegalArgumentException e)
