@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" strict="true">
+    <Properties>
+        <Property name="filename">target/logs/jett.log</Property>
+    </Properties>
+    <Filter type="ThresholdFilter" level="trace"/>
+    <Appenders>
+        <Appender type="File" name="File" fileName="${filename}">
+            <Layout type="PatternLayout">
+                <Pattern>%d %p %C{1.} [%t] %m%n</Pattern>
+            </Layout>
+        </Appender>
+    </Appenders>
+    <Loggers>
+        <!--<Logger name="net.sf.jett.transform.BlockTransformer" level="trace" additivity="false">
+            <AppenderRef ref="File"/>
+        </Logger>-->
+
+        <Root level="warn">
+            <AppenderRef ref="File"/>
+        </Root>
+    </Loggers>
+</Configuration>

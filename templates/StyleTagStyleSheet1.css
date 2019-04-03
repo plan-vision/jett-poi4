@@ -1,0 +1,12 @@
+.redBoxCenter
+{
+   border: thin;
+   border-color: red;
+   alignment: center;
+}
+.blueBoldBigText
+{
+   font-color: blue;
+   font-weight: bold;
+   font-height-in-points: 24;
+}
