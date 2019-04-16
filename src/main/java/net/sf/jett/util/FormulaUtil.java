@@ -8,9 +8,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 import org.apache.poi.ss.formula.SheetNameFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.jett.formula.CellRef;
 import net.sf.jett.formula.CellRefRange;
@@ -25,7 +25,7 @@ import net.sf.jett.model.WorkbookContext;
  */
 public class FormulaUtil
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(FormulaUtil.class);
 
     // Prevents a mapping of "A1" => "A21" and "A2" => "A22" from yielding
     // "A1 + A2" => "A21 + A2" => "A221 + A22".

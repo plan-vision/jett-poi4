@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.PrintSetup;
@@ -18,6 +16,8 @@ import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.jett.exception.MetadataParseException;
 import net.sf.jett.expression.Expression;
@@ -43,7 +43,7 @@ import net.sf.jett.util.SheetUtil;
  */
 public class SheetCloner
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(SheetCloner.class);
 
     /**
      * Determines the beginning of metadata text inside sheet names only.  It's

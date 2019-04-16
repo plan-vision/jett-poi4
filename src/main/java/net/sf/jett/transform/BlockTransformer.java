@@ -2,11 +2,11 @@ package net.sf.jett.transform;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.jett.model.Block;
 import net.sf.jett.model.WorkbookContext;
@@ -22,7 +22,7 @@ import net.sf.jett.util.SheetUtil;
  */
 public class BlockTransformer
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(BlockTransformer.class);
 
     /**
      * Transforms the given <code>Sheet</code>, using the given <code>Map</code>

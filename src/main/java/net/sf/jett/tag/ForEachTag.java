@@ -8,9 +8,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 import org.apache.poi.ss.usermodel.RichTextString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.jagg.AggregateFunction;
 import net.sf.jagg.Aggregations;
@@ -55,7 +55,7 @@ import net.sf.jett.util.OrderByComparator;
  */
 public class ForEachTag extends BaseLoopTag
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(ForEachTag.class);
 
     /**
      * Attribute for specifying the <code>Collection</code> over which to

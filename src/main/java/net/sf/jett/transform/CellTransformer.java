@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -14,6 +12,8 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.jett.event.CellEvent;
 import net.sf.jett.event.CellListener;
@@ -39,8 +39,8 @@ import net.sf.jett.util.SheetUtil;
  */
 public class CellTransformer
 {
-    private static final Logger logger = LogManager.getLogger();
-    private static final Logger tagLogger = LogManager.getLogger(CellTransformer.class.getName() + ".Tag");
+    private static final Logger logger = LoggerFactory.getLogger(CellTransformer.class);
+    private static final Logger tagLogger = LoggerFactory.getLogger(CellTransformer.class.getName() + ".Tag");
 
     /**
      * Transforms the given <code>Cell</code>, using the given <code>Map</code>

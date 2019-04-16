@@ -6,13 +6,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import net.sf.jett.event.TagLoopListener;
 import net.sf.jett.event.TagLoopEvent;
+import net.sf.jett.event.TagLoopListener;
 import net.sf.jett.exception.TagParseException;
 import net.sf.jett.model.BaseLoopTagStatus;
 import net.sf.jett.model.Block;
@@ -44,7 +44,7 @@ import net.sf.jett.util.SheetUtil;
  */
 public abstract class BaseLoopTag extends BaseTag
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(BaseLoopTag.class);
 
     /**
      * Attribute for forcing "copy right" behavior.  (Default is copy down.)

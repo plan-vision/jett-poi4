@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -19,10 +17,11 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.jett.exception.TagParseException;
 import net.sf.jett.model.Block;
-import net.sf.jett.model.BorderType;
 import net.sf.jett.model.CellStyleCache;
 import net.sf.jett.model.ExcelColor;
 import net.sf.jett.model.WorkbookContext;
@@ -55,7 +54,7 @@ import net.sf.jett.util.SheetUtil;
  */
 public class SpanTag extends BaseTag
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(SpanTag.class);
 
     /**
      * Attribute for specifying the growth factor.

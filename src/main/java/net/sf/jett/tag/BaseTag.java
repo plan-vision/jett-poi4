@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.jett.event.TagEvent;
 import net.sf.jett.event.TagListener;
@@ -36,7 +36,7 @@ import net.sf.jett.util.SheetUtil;
  */
 public abstract class BaseTag implements Tag
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(BaseTag.class);
 
     /**
      * Attribute for specifying a <code>TagListener</code> to listen for

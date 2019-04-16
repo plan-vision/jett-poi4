@@ -2,16 +2,16 @@ package net.sf.jett.parser;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.LogManager;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.logging.log4j.LogManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.jett.exception.StyleParseException;
-import net.sf.jett.model.BorderType;
 import net.sf.jett.model.FontCharset;
 import net.sf.jett.model.FontTypeOffset;
 import net.sf.jett.model.FontUnderline;
@@ -116,7 +116,7 @@ import net.sf.jett.model.Style;
  */
 public class StyleParser
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(StyleParser.class);
 
     /**
      * The property to specify horizontal alignment of the text.

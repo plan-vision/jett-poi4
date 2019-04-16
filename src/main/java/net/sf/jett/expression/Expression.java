@@ -18,10 +18,10 @@ import org.apache.commons.jexl2.parser.ASTSizeMethod;
 import org.apache.commons.jexl2.parser.Node;
 import org.apache.commons.jexl2.parser.Parser;
 import org.apache.commons.jexl2.parser.SimpleNode;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.RichTextString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.jett.exception.ParseException;
 import net.sf.jett.formula.Formula;
@@ -40,7 +40,7 @@ import net.sf.jett.util.RichTextStringUtil;
  */
 public class Expression
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(Expression.class);
 
     /**
      * Contains a cache of collection names found in expression texts.  If it is

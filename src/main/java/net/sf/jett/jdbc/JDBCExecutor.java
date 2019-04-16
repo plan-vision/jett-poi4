@@ -22,8 +22,8 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A <code>JDBCExecutor</code> has the capability of running SQL statements via
@@ -34,7 +34,7 @@ import org.apache.logging.log4j.LogManager;
  */
 public class JDBCExecutor
 {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(JDBCExecutor.class);
 
     private Connection myConnection;
 
