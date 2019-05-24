@@ -9,7 +9,7 @@
 	<groupId>net.sf.jett</groupId>
 	<artifactId>jett-core</artifactId>
 	<packaging>jar</packaging>
-	<version>0.11.1-SNAPSHOT</version>
+	<version>0.11.1</version>
 
 	<name>jett-core</name>
 	<url>http://jett.sourceforge.net</url>
