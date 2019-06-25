@@ -7,7 +7,7 @@
     <groupId>net.sf.jett</groupId>
     <artifactId>jett-core</artifactId>
     <packaging>jar</packaging>
-    <version>0.11.1-SNAPSHOT</version>
+    <version>0.11.2-POI4</version>
 
     <name>jett-core</name>
     <url>http://jett.sourceforge.net</url>
@@ -39,13 +39,13 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
-			<version>4.0.1</version>
+			<version>4.1.0</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml-schemas</artifactId>
-			<version>4.0.1</version>
+			<version>4.1.0</version>
 		</dependency>
 		
         <dependency>
