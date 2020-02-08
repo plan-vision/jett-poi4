@@ -9,7 +9,7 @@
 	<groupId>net.sf.jett</groupId>
 	<artifactId>jett-core</artifactId>
 	<packaging>jar</packaging>
-	<version>0.11.2</version>
+	<version>0.11.3</version>
 
 	<name>jett-core</name>
 	<url>http://jett.sourceforge.net</url>
@@ -70,17 +70,17 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.7.29</version>
+			<version>1.7.30</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
-			<version>1.7.29</version>
+			<version>1.7.30</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
-			<version>1.7.29</version>
+			<version>1.7.30</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
