@@ -67,9 +67,7 @@ public class TagParserTest
     @Test(expected = TagParseException.class)
     public void testNoNamespace()
     {
-        Sheet sheet = theWorkbook.getSheetAt(0);
-        Row row = sheet.getRow(0);
-        Cell cell = row.getCell(0);
+        Cell cell = getCellForTest(0, 0);
         TagParser parser = new TagParser(cell);
         parser.parse();
     }
@@ -82,9 +80,7 @@ public class TagParserTest
     @Test(expected = TagParseException.class)
     public void testNamespaceButNoTagName()
     {
-        Sheet sheet = theWorkbook.getSheetAt(0);
-        Row row = sheet.getRow(1);
-        Cell cell = row.getCell(0);
+        Cell cell = getCellForTest(1, 0);
         TagParser parser = new TagParser(cell);
         parser.parse();
     }
@@ -96,9 +92,7 @@ public class TagParserTest
     @Test(expected = TagParseException.class)
     public void testValueWithoutAttribute()
     {
-        Sheet sheet = theWorkbook.getSheetAt(0);
-        Row row = sheet.getRow(2);
-        Cell cell = row.getCell(0);
+        Cell cell = getCellForTest(2, 0);
         TagParser parser = new TagParser(cell);
         parser.parse();
     }
@@ -110,9 +104,7 @@ public class TagParserTest
     @Test(expected = TagParseException.class)
     public void testNoAttributeName()
     {
-        Sheet sheet = theWorkbook.getSheetAt(0);
-        Row row = sheet.getRow(3);
-        Cell cell = row.getCell(0);
+        Cell cell = getCellForTest(3, 0);
         TagParser parser = new TagParser(cell);
         parser.parse();
     }
@@ -124,9 +116,7 @@ public class TagParserTest
     @Test(expected = TagParseException.class)
     public void testColonInAttributeName()
     {
-        Sheet sheet = theWorkbook.getSheetAt(0);
-        Row row = sheet.getRow(4);
-        Cell cell = row.getCell(0);
+        Cell cell = getCellForTest(4, 0);
         TagParser parser = new TagParser(cell);
         parser.parse();
     }
@@ -138,9 +128,7 @@ public class TagParserTest
     @Test(expected = TagParseException.class)
     public void testNestedBeginTag()
     {
-        Sheet sheet = theWorkbook.getSheetAt(0);
-        Row row = sheet.getRow(5);
-        Cell cell = row.getCell(0);
+        Cell cell = getCellForTest(5, 0);
         TagParser parser = new TagParser(cell);
         parser.parse();
     }
@@ -152,9 +140,7 @@ public class TagParserTest
     @Test(expected = TagParseException.class)
     public void testNestedEndTag()
     {
-        Sheet sheet = theWorkbook.getSheetAt(0);
-        Row row = sheet.getRow(6);
-        Cell cell = row.getCell(0);
+        Cell cell = getCellForTest(6, 0);
         TagParser parser = new TagParser(cell);
         parser.parse();
     }
@@ -166,9 +152,7 @@ public class TagParserTest
     @Test(expected = TagParseException.class)
     public void testNoEndTag()
     {
-        Sheet sheet = theWorkbook.getSheetAt(0);
-        Row row = sheet.getRow(7);
-        Cell cell = row.getCell(0);
+        Cell cell = getCellForTest(7, 0);
         TagParser parser = new TagParser(cell);
         parser.parse();
     }
@@ -180,9 +164,7 @@ public class TagParserTest
     @Test(expected = TagParseException.class)
     public void testNoAttrValue()
     {
-        Sheet sheet = theWorkbook.getSheetAt(0);
-        Row row = sheet.getRow(8);
-        Cell cell = row.getCell(0);
+        Cell cell = getCellForTest(8, 0);
         TagParser parser = new TagParser(cell);
         parser.parse();
     }
@@ -194,9 +176,7 @@ public class TagParserTest
     @Test(expected = TagParseException.class)
     public void testEoiValue()
     {
-        Sheet sheet = theWorkbook.getSheetAt(0);
-        Row row = sheet.getRow(9);
-        Cell cell = row.getCell(0);
+        Cell cell = getCellForTest(9, 0);
         TagParser parser = new TagParser(cell);
         parser.parse();
     }
@@ -207,9 +187,7 @@ public class TagParserTest
     @Test
     public void testBodilessTag()
     {
-        Sheet sheet = theWorkbook.getSheetAt(0);
-        Row row = sheet.getRow(10);
-        Cell cell = row.getCell(0);
+        Cell cell = getCellForTest(10, 0);
         TagParser parser = new TagParser(cell);
         parser.parse();
 
@@ -242,9 +220,7 @@ public class TagParserTest
     @Test
     public void testNotATag()
     {
-        Sheet sheet = theWorkbook.getSheetAt(0);
-        Row row = sheet.getRow(11);
-        Cell cell = row.getCell(0);
+        Cell cell = getCellForTest(11, 0);
         TagParser parser = new TagParser(cell);
         parser.parse();
 
@@ -257,9 +233,7 @@ public class TagParserTest
     @Test
     public void testTagWithBody()
     {
-        Sheet sheet = theWorkbook.getSheetAt(0);
-        Row row = sheet.getRow(12);
-        Cell cell = row.getCell(0);
+        Cell cell = getCellForTest(12, 0);
         TagParser parser = new TagParser(cell);
         parser.parse();
 
@@ -274,14 +248,19 @@ public class TagParserTest
     @Test
     public void testEndTag()
     {
-        Sheet sheet = theWorkbook.getSheetAt(0);
-        Row row = sheet.getRow(13);
-        Cell cell = row.getCell(0);
+        Cell cell = getCellForTest(13, 0);
         TagParser parser = new TagParser(cell);
         parser.parse();
 
         assertTrue(parser.isTag());
         assertTrue(parser.isEndTag());
+    }
+
+    private Cell getCellForTest(int rowIndex, int col) {
+        Sheet sheet = theWorkbook.getSheetAt(0);
+        Row row = sheet.getRow(rowIndex);
+        Cell cell = row.getCell(col);
+        return cell;
     }
 
     /**
@@ -302,9 +281,7 @@ public class TagParserTest
     @Test
     public void testEscapesInAttributeValues()
     {
-        Sheet sheet = theWorkbook.getSheetAt(0);
-        Row row = sheet.getRow(14);
-        Cell cell = row.getCell(0);
+        Cell cell = getCellForTest(14, 0);
         TagParser parser = new TagParser(cell);
         parser.parse();
 
@@ -318,6 +295,23 @@ public class TagParserTest
         {
             assertTrue(attributes.containsKey(attrNames.get(i)));
             assertEquals(attrValues.get(i), attributes.get(attrNames.get(i)).getString());
+        }
+    }
+
+    /**
+     * Test when the cell contains an unclosed formula: it must not cause an infinite loop !
+     *
+     * like:  $[IF(L2>TODAY(),"Date is in the future","")
+     */
+    @Test(timeout = 100)
+    public void testUnclosedFormula() {
+        try {
+            Cell cell = getCellForTest(15, 0);
+            TagParser parser = new TagParser(cell);
+            parser.parse();
+            fail("Must have thrown a TagParseException");
+        } catch (TagParseException expected) {
+            assertEquals("Cannot find Formula end in tag text: $[IF(L2>TODAY(),\"Date is in the future\",\"\") at Sheet1!A16", expected.getMessage());
         }
     }
 }
