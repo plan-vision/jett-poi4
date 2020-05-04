@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.RichTextString;
@@ -22,6 +24,8 @@ import net.sf.jett.util.SheetUtil;
  */
 public class TagParser
 {
+    private static final Logger logger = LogManager.getLogger();
+
     /**
      * Determines the beginning of an XML start tag.
      */
@@ -122,15 +126,27 @@ public class TagParser
                     insideJettFormula)
             {
                 String lexeme = scanner.getCurrLexeme();
+
                 //System.err.println(lexeme);
                 // Bypass any tokens normally indicating beginning of a tag if found
                 // inside a JETT Formula.
                 if (token == TagScanner.Token.TOKEN_STRING) {
                     if (lexeme.contains(Formula.BEGIN_FORMULA)) {
                         insideJettFormula = true;
+
+                        logger.debug("Formula start in <" + lexeme + ">");
                     }
                     if (lexeme.contains(Formula.END_FORMULA)) {
                         insideJettFormula = false;
+
+                        logger.debug("Formula end in <" + lexeme +">");
+                    }
+                }
+
+                if (token == TagScanner.Token.TOKEN_EOI || token == TagScanner.Token.TOKEN_ERROR_EOI_IN_DQUOTES) {
+                    // unclosed formula
+                    if (insideJettFormula) {
+                        throw new TagParseException("Cannot find Formula end in tag text: " + myCellText + SheetUtil.getCellLocation(myCell));
                     }
                 }
 
