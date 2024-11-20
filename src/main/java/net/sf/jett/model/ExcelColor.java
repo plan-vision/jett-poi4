@@ -254,6 +254,8 @@ public enum ExcelColor
     {
         if (index == Font.COLOR_NORMAL || index == XSSF_COLOR_COMMENT)
             return HSSF_COLOR_AUTOMATIC.getColor();
+        if (index > hssfColors.length) // OUT OF BOUNDS ? RETURN FIRST COLOR = black
+        	return hssfColors[0]; // black
         return hssfColors[index];
     }
 }
