@@ -1,6 +1,7 @@
 package net.sf.jett.test;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -100,6 +101,17 @@ public class AnaTagTest extends TestCase
     @Override
     protected Map<String, Object> getBeansMap()
     {
-        return TestUtility.getCountyData();
+        Map<String, Object> beans = new HashMap();
+        beans.put("california",TestUtility.getCountyData());
+        //beans.putAll(TestUtility.getEmployeeData());  TODO WHY CALIFORNIA IS MISSING!??!
+        return beans;
     }
+    /*@Override
+    protected Map<String, Object> getBeansMap()
+    {
+        Map<String, Object> beans = TestUtility.getStateData();
+        beans.putAll(TestUtility.getEmployeeData());
+        return beans;
+    }*/
+    
 }

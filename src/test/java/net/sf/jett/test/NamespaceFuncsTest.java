@@ -124,4 +124,5 @@ public class NamespaceFuncsTest extends TestCase
         beans.put("pi", Math.PI);
         return beans;
     }
+    
 }

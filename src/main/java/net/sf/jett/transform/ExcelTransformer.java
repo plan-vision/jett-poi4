@@ -194,9 +194,9 @@ public class ExcelTransformer
      * Sets whether the JEXL "lenient" flag is set.
      * @param lenient Whether the JEXL "lenient" flag is set.
      */
-    public void setLenient(boolean lenient)
+    public void setStrict(boolean lenient)
     {
-        myExpressionFactory.setLenient(lenient);
+        myExpressionFactory.setStrict(lenient);
     }
 
     /**
@@ -218,7 +218,7 @@ public class ExcelTransformer
      */
     public void setCache(int size)
     {
-        myExpressionFactory.setCache(size);
+        myExpressionFactory.setCacheSize(size);
     }
 
     /**
@@ -719,7 +719,6 @@ public class ExcelTransformer
         }
         // Replaced named range formulas that had JETT formulas present in the
         // formula map.
-        int numNamedRanges = workbook.getNumberOfNames();
         for (String key : formulaMap.keySet())
         {
             // Look for a "?", which must be present in the keys for all formulas
@@ -747,9 +746,8 @@ public class ExcelTransformer
             }
 
             Name namedRange = null;
-            for (int i = 0; i < numNamedRanges; i++)
-            {
-                Name n = workbook.getNameAt(i);
+            List<? extends Name>  an = workbook.getAllNames();
+            for (Name n : an) {
                 if (n.getNameName().equals(namedRangeName) &&
                         n.getSheetIndex() == sheetScopeIndex)
                 {

@@ -265,11 +265,9 @@ public class SheetCloner
      */
     private void cloneNamedRanges(Workbook workbook, int prevIndex)
     {
-        int numNamedRanges = workbook.getNumberOfNames();
         int clonedSheetIndex = workbook.getNumberOfSheets() - 1;
-        for (int i = 0; i < numNamedRanges; i++)
-        {
-            Name name = workbook.getNameAt(i);
+        List<? extends Name>  alln= workbook.getAllNames();
+        for (Name name : alln) {
             // Avoid copying Excel's "built-in" (and hidden) named ranges.
             if (name.getSheetIndex() == prevIndex && !NameTag.EXCEL_BUILT_IN_NAMES.contains(name.getNameName()))
             {
@@ -300,10 +298,9 @@ public class SheetCloner
     {
         if (fromIndex != toIndex)
         {
-            int numNamedRanges = workbook.getNumberOfNames();
-            for (int i = 0; i < numNamedRanges; i++)
+            List<? extends Name> names = workbook.getAllNames();
+            for (Name name : names)
             {
-                Name name = workbook.getNameAt(i);
                 int scopeIndex = name.getSheetIndex();
                 if (scopeIndex == fromIndex)
                 {

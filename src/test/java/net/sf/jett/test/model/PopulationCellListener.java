@@ -64,7 +64,7 @@ public class PopulationCellListener implements CellListener
                 Workbook workbook = cell.getSheet().getWorkbook();
                 CellStyle style = workbook.createCellStyle();
                 style.cloneStyleFrom(cell.getCellStyle());
-                short fontIdx = style.getFontIndex();
+                int fontIdx = style.getFontIndex();
                 Font font = workbook.getFontAt(fontIdx);
                 Font boldFont = workbook.findFont(true, font.getColor(), font.getFontHeight(),
                         font.getFontName(), font.getItalic(), font.getStrikeout(), font.getTypeOffset(),

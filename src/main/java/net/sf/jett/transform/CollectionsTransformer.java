@@ -378,11 +378,6 @@ public class CollectionsTransformer
         // been defined yet, e.g. a looping variable defined in a subsequent
         // forEach tag.  Store the current silent/lenient flags for restoration
         // later.
-        boolean lenient = factory.isLenient();
-        boolean silent = factory.isSilent();
-        factory.setLenient(true);
-        factory.setSilent(true);
-
         Row startRow = startTag.getRow();
         int startCellNum = startColumnIndex;
         int endCellNum = right;
@@ -435,11 +430,6 @@ public class CollectionsTransformer
                 }
             }
         }  // End loop through rows.
-
-        // Restore old settings.
-        factory.setLenient(lenient);
-        factory.setSilent(silent);
-
-        return collectionNames;
+       return collectionNames;
     }
 }

@@ -3,7 +3,11 @@ package net.sf.jett.expression;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.jexl2.JexlEngine;
+import org.apache.commons.jexl3.JexlBuilder;
+import org.apache.commons.jexl3.JexlEngine;
+import org.apache.commons.jexl3.JexlExpression;
+import org.apache.commons.jexl3.internal.introspection.Permissions;
+import org.apache.commons.jexl3.introspection.JexlPermissions;
 
 /**
  * <p>An <code>ExpressionFactory</code> is a factory class that
@@ -23,126 +27,65 @@ import org.apache.commons.jexl2.JexlEngine;
 public class ExpressionFactory
 {
     private JexlEngine myEngine;
-    private Map<String, Object> myFuncs;
-    private Map<String, org.apache.commons.jexl2.Expression> myExpressionCache;
-
+    private Map<String, Object> myFuncs = new HashMap();
+    private boolean isStrict = false;
+    private boolean isDebug = false;
+    private boolean isSilent = true;
+    private int cacheSize = 512;
+    private JexlPermissions permissions = JexlPermissions.parse(null); // DEFAULT | null (srcs) > UNRESTRICTED!
+    
+    public ExpressionFactory() {
+        myFuncs.put("jagg", JaggFuncs.class);
+        myFuncs.put("jett", JettFuncs.class);
+    }
+    
     /**
      * Constructs a <code>ExpressionFactory</code>.  Initializes an internal
      * <code>JexlEngine</code> and initializes the functions map.
      */
-    public ExpressionFactory()
-    {
-        myEngine = new JexlEngine();
-        myEngine.setLenient(true);
-        myEngine.setSilent(false);
-        myEngine.setDebug(false);
-        myFuncs = new HashMap<>();
-        myEngine.setFunctions(myFuncs);
+    public boolean isDebug() {
+        return isDebug;
+    }
+    public boolean isStrict() {
+        return isStrict;
+    }
+    public boolean isSilent() {
+        return isSilent;
+    }
+    public void setDebug(boolean val) { if (isDebug == val) return;isDebug=val;myEngine=null; }
+    public void setStrict(boolean val) { if (isStrict == val) return;isStrict=val;myEngine=null; }
+    public void setSilent(boolean val) { if (isSilent == val) return;isSilent=val;myEngine=null; }
+    public void setCacheSize(int val) { if (cacheSize == val) return;cacheSize=val;myEngine=null; }
+
+    private void check() {
+        if (myEngine != null)
+            return;
         myFuncs.put("jagg", JaggFuncs.class);
         myFuncs.put("jett", JettFuncs.class);
-        myExpressionCache = new HashMap<>();
+        myEngine=new JexlBuilder().strict(isStrict).debug(isDebug).silent(isSilent).cache(cacheSize).namespaces(myFuncs).permissions(permissions).create();
     }
 
-    /**
-     * Passes the given "lenient" flag on to the internal
-     * <code>JexlEngine</code>.
-     * @param lenient Whether the internal <code>JexlEngine</code> should be
-     *    "lenient".
-     */
-    public void setLenient(boolean lenient)
-    {
-        myEngine.setLenient(lenient);
+    public JexlExpression createExpression(String expression)  {
+        check();
+        return myEngine.createExpression(expression);
     }
-
-    /**
-     * Returns the internal <code>JexlEngine's</code> "lenient" flag.
-     * @return Whether the internal <code>JexlEngine</code> is currently
-     *    "lenient".
-     */
-    public boolean isLenient()
-    {
-        return myEngine.isLenient();
-    }
-
-    /**
-     * Passes the given "silent" flag on to the internal
-     * <code>JexlEngine</code>.
-     * @param silent Whether the internal <code>JexlEngine</code> should be
-     *    "silent".
-     */
-    public void setSilent(boolean silent)
-    {
-        myEngine.setSilent(silent);
-    }
-
-    /**
-     * Returns the internal <code>JexlEngine's</code> "silent" flag.
-     * @return Whether the internal <code>JexlEngine</code> is currently
-     *    "silent".
-     */
-    public boolean isSilent()
-    {
-        return myEngine.isSilent();
-    }
-
-    /**
-     * Sets the size of the Expression cache to be used inside the JEXL Engine.
-     * @param size The size of the cache.
-     * @since 0.2.0
-     */
-    public void setCache(int size)
-    {
-        myEngine.setCache(size);
-    }
-
-    /**
-     * Passes the given "debug" flag on to the internal
-     * <code>JexlEngine</code>.
-     * @param debug Whether the internal <code>JexlEngine</code> should be
-     *    in "debug" mode.
-     * @since 0.9.1
-     */
-    public void setDebug(boolean debug)
-    {
-        myEngine.setDebug(debug);
-    }
-
-    /**
-     * Registers an object under the given namespace in the JEXL Engine.  Each
-     * public method in the object's class is exposed as a "function" available
-     * in the JEXL Engine.  To use instance methods, pass an instance of the
-     * object.  To use class methods, pass a <code>Class</code> object.
-     * @param namespace The namespace.
-     * @param funcsObject An object (or a <code>Class</code>) containing the
-     *    methods to expose as JEXL Engine functions.
-     * @throws IllegalArgumentException If the namespace has already been
-     *    registered.
-     * @since 0.2.0
-     */
-    public void registerFuncs(String namespace, Object funcsObject)
-    {
-        if (myFuncs.get(namespace) != null)
-        {
-            throw new IllegalArgumentException("A functions object with namespace \"" +
-                    namespace + "\" has already been registered.");
-        }
+    public void registerFuncs(String namespace, Object funcsObject) {
+        if (myFuncs.containsKey(namespace))
+            throw new IllegalArgumentException("ExpressionFactory : namespace "+namespace+" already registed!");
         myFuncs.put(namespace, funcsObject);
+        myEngine=null;
     }
-
-    /**
-     * Create a JEXL <code>Expression</code> from a string.
-     * @param expression The expression as a <code>String</code>.
-     * @return A JEXL <code>Expression</code>.
+    
+    /* DEFAULT IS ALLOW ALL 
+     ["java.util.*","!java.lang.reflect.**","java.exact.class"]..
      */
-    public org.apache.commons.jexl2.Expression createExpression(String expression)
-    {
-        org.apache.commons.jexl2.Expression jexlExpr = myExpressionCache.get(expression);
-        if (jexlExpr == null)
-        {
-            jexlExpr = myEngine.createExpression(expression);
-            myExpressionCache.put(expression, jexlExpr);
-        }
-        return jexlExpr;
+    public void permissions(String rules[]) {
+        permissions = JexlPermissions.parse(rules);
+        myEngine=null;
+    }
+    
+    public JexlEngine createJexlEngine() {
+        return new JexlBuilder().strict(isStrict).debug(isDebug).silent(isSilent).cache(cacheSize).namespaces(myFuncs).permissions(permissions).create();
     }
 }
 

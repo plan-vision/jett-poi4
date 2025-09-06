@@ -2586,8 +2586,9 @@ public class SheetUtil
                 // Un-correct other colors, so that setColor will correct it.
                 if (xssfFontColor.getCTColor().isSetTheme())
                     xf.setColor(xssfFontColor);
-                else
-                    xf.setColor(new XSSFColor(xssfFontColor.getCTColor()));
+                else {
+                    xf.setColor(XSSFColor.from(xssfFontColor.getCTColor()));
+                }
                 // End of workaround for Bugs 51236 and 52079.
             }
         }

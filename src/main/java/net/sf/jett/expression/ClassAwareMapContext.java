@@ -4,7 +4,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.jexl2.MapContext;
+import org.apache.commons.jexl3.MapContext;
+
 
 /**
  * A <code>ClassAwareMapContext</code> is a JEXL <code>MapContext</code> that

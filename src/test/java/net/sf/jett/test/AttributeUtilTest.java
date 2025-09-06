@@ -723,4 +723,5 @@ public class AttributeUtilTest
     {
         AttributeUtil.evaluateStringVarName(myTag, new XSSFRichTextString("var"), myBeans, null);
     }
+    
 }

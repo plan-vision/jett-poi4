@@ -84,7 +84,7 @@ public class CellListenerTest extends TestCase
         {
             Row row = cellListener.getRow(i + 2);
             Cell caPop = row.getCell(1);
-            short popFontIdx = caPop.getCellStyle().getFontIndex();
+            int popFontIdx = caPop.getCellStyle().getFontIndex();
             Font popFont = workbook.getFontAt(popFontIdx);
             double population = caPop.getNumericCellValue();
             /*if (population >= 1000000)
@@ -94,7 +94,7 @@ public class CellListenerTest extends TestCase
                 assertEquals("Expected not bold font at row " + (i + 2) + ", cell 1",
                         Font.BOLDWEIGHT_NORMAL, popFont.getBoldweight());*/
             Cell caArea = row.getCell(2);
-            short areaFontIdx = caArea.getCellStyle().getFontIndex();
+            int areaFontIdx = caArea.getCellStyle().getFontIndex();
             Font areaFont = workbook.getFontAt(areaFontIdx);
             double area = caArea.getNumericCellValue();
             if (area >= 10000)
@@ -108,7 +108,7 @@ public class CellListenerTest extends TestCase
         {
             Row row = cellListener.getRow(i + 2);
             Cell nvPop = row.getCell(7);
-            short popFontIdx = nvPop.getCellStyle().getFontIndex();
+            int popFontIdx = nvPop.getCellStyle().getFontIndex();
             Font popFont = workbook.getFontAt(popFontIdx);
             double population = nvPop.getNumericCellValue();
             /*if (population >= 1000000)
@@ -118,7 +118,7 @@ public class CellListenerTest extends TestCase
                 assertEquals("Expected not bold font at row " + (i + 2) + ", cell 7",
                         Font.BOLDWEIGHT_NORMAL, popFont.getBoldweight());*/
             Cell nvArea = row.getCell(8);
-            short areaFontIdx = nvArea.getCellStyle().getFontIndex();
+            int areaFontIdx = nvArea.getCellStyle().getFontIndex();
             Font areaFont = workbook.getFontAt(areaFontIdx);
             double area = nvArea.getNumericCellValue();
             if (area >= 10000)

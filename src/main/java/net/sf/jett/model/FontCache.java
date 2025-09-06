@@ -51,7 +51,7 @@ public class FontCache
      */
     private void cachePreExistingFonts()
     {
-        short numFonts = myWorkbook.getNumberOfFonts();
+       int numFonts = myWorkbook.getNumberOfFonts();
         logger.trace("Caching {} pre-existing cell fonts.", numFonts);
         for (short i = 0; i < numFonts; i++)
         {

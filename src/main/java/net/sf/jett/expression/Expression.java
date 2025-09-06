@@ -6,18 +6,22 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.jexl2.JexlContext;
-import org.apache.commons.jexl2.parser.ASTIdentifier;
-import org.apache.commons.jexl2.parser.ASTMethodNode;
-import org.apache.commons.jexl2.parser.ASTNumberLiteral;
-import org.apache.commons.jexl2.parser.ASTReference;
-import org.apache.commons.jexl2.parser.ASTSizeMethod;
-import org.apache.commons.jexl2.parser.Node;
-import org.apache.commons.jexl2.parser.Parser;
-import org.apache.commons.jexl2.parser.SimpleNode;
+import org.apache.commons.jexl3.JexlBuilder;
+import org.apache.commons.jexl3.JexlContext;
+import org.apache.commons.jexl3.JexlEngine;
+import org.apache.commons.jexl3.JexlException;
+import org.apache.commons.jexl3.JexlScript;
+import org.apache.commons.jexl3.parser.ASTIdentifier;
+import org.apache.commons.jexl3.parser.ASTMethodNode;
+import org.apache.commons.jexl3.parser.ASTNumberLiteral;
+import org.apache.commons.jexl3.parser.ASTReference;
+import org.apache.commons.jexl3.parser.Node;
+import org.apache.commons.jexl3.parser.Parser;
+import org.apache.commons.jexl3.parser.SimpleNode;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -131,129 +135,83 @@ public class Expression
      * @return The full reference string to the collection name, or
      *    <code>null</code> if there is no collection.
      */
-    private String findCollectionName(ASTReference node, Map<String, Object> beans,
-                                      WorkbookContext context)
-    {
+    private String findCollectionName(List<String> refPath, Map<String, Object> beans, WorkbookContext context) {
         ExpressionFactory factory = context.getExpressionFactory();
         List<String> noImplProcCollNames = context.getNoImplicitProcessingCollectionNames();
-        int count = node.jjtGetNumChildren();
+
+        StringBuilder sb = new StringBuilder();
         String collectionName = null;
-        for (int i = 0; i < count; i++)
-        {
-            Node child = node.jjtGetChild(i);
-            if (child instanceof ASTIdentifier)
-            {
-                ASTIdentifier identifier = (ASTIdentifier) child;
 
-                if (collectionName == null)
-                    collectionName = identifier.image;
-                else
-                    collectionName = collectionName + "." + identifier.image;
-                logger.debug("    fCN: Test Expr ({}/{}): \"{}\".",
-                        i, count, collectionName);
+        for (int i = 0; i < refPath.size(); i++) {
+            String segment = refPath.get(i);
+            if (sb.length() > 0)
+                sb.append('.');
+            sb.append(segment);
+            collectionName = sb.toString();
 
-                // Turn off implicit collection processing on a per-collection name
-                // basis.
-                if (noImplProcCollNames.contains(identifier.image))
-                {
-                    logger.trace("    fCN: Skipping because {} has been turned off.", identifier.image);
-                    continue;
-                }
+            logger.debug("    fCN: Test Expr ({}/{}): \"{}\".", i + 1, refPath.size(), collectionName);
 
-                Expression expr = new Expression(collectionName);
-                Object result = expr.evaluate(factory, beans);
-                if (result instanceof Collection)
-                {
-                    // Continue past a Collection if the next method called is a
-                    // method that is:
-                    // 1. side-effect free
-                    // 2. returns something (not void) that is not itself a
-                    //    Collection, array, or Iterator.
-                    // This is done by looking at the next child (if it exists) and
-                    // determining if it is one of a certain "family" of methods
-                    // commonly expected to be called on Collections.
-                    if (i < count - 1)
-                    {
-                        Node nextChild = node.jjtGetChild(i + 1);
-                        if (nextChild instanceof ASTMethodNode)
-                        {
-                            ASTMethodNode methodNode = (ASTMethodNode) nextChild;
-                            if (logger.isDebugEnabled())
-                            {
-                                logger.debug("      fCN: method.image = {}", methodNode.image);
-                                logger.debug("      fCN: method.toString = {}", methodNode.toString());
-                                int numChildren = methodNode.jjtGetNumChildren();
-                                logger.debug("      fCN: method.jjtGetNumChildren = {}", numChildren);
-                                for (int j = 0; j < numChildren; j++)
-                                {
-                                    Node methodChild = methodNode.jjtGetChild(j);
-                                    logger.debug("Child {} ({}): {}",
-                                            j, methodChild.getClass().getName(), methodChild.toString());
-                                    if (methodChild instanceof ASTIdentifier)
-                                    {
-                                        ASTIdentifier childIdentifier = (ASTIdentifier) methodChild;
-                                        logger.debug("  child image = \"{}\".", childIdentifier.image);
-                                    }
-                                }
-                            }
-                            // First child should be the identifier (name) of the method.
-                            ASTIdentifier childIdentifier = (ASTIdentifier) methodNode.jjtGetChild(0);
-                            if (childIdentifier.image != null &&
-                                    (childIdentifier.image.startsWith("capacity") ||
-                                            childIdentifier.image.startsWith("contains") ||
-                                            childIdentifier.image.startsWith("element") ||
-                                            childIdentifier.image.startsWith("equals") ||
-                                            childIdentifier.image.equals("get") ||  // Don't cover getter methods that may return Collections
-                                            childIdentifier.image.startsWith("hashCode") ||
-                                            childIdentifier.image.startsWith("indexOf") ||
-                                            childIdentifier.image.startsWith("isEmpty") ||
-                                            childIdentifier.image.startsWith("lastIndexOf") ||
-                                            childIdentifier.image.startsWith("size") ||
-                                            childIdentifier.image.startsWith("toString")
-                                    )
-                                    )
-                            {
-                                // Continue on to the next child (if any).
-                                logger.trace("      fCN: Skipping {} because of child method name {}",
-                                        collectionName, childIdentifier.image);
-                                continue;
-                            }
-                        }
-                        else if (nextChild instanceof ASTSizeMethod)
-                        {
-                            // Apparently, "ASTSizeMethod" is a special case for
-                            // ".size()", but "ASTSizeMethod" is NOT a
-                            // "ASTMethodNode", so this check is needed!
-                            logger.trace("      fCN: sizeMethod.image = {}",
-                                    ((ASTSizeMethod) nextChild).image);
-                            continue;
-                        }
-                        else if (nextChild instanceof ASTNumberLiteral)
-                        {
-                            // JEXL allows ".n" to access an element of a List.
-                            logger.trace("      fCN: numberLiteral.image = {}",
-                                    ((ASTNumberLiteral) nextChild).image);
-                            continue;
-                        }
-                        else
-                        {
-                            logger.debug("      fCN: Next child is a {}", nextChild.getClass().getName());
-                        }
-                    }
-                    else
-                    {
-                        // No additional children.  The Expression simply evaluates
-                        // to a Collection.
-                        logger.trace("      fCN: Just a collection: \"{}\".", collectionName);
-                        return null;
+// Respect the per-collection opt-out.
+            if (noImplProcCollNames.contains(segment)) {
+                logger.trace("    fCN: Skipping because {} has been turned off.", segment);
+                continue;
+            }
+
+// Evaluate the current prefix against beans/context.
+            Expression expr = new Expression(collectionName);
+            Object result = expr.evaluate(factory, beans);
+
+            if (result instanceof Collection) {
+// If there is a "next" segment, check if it's a side-effect-free,
+// non-collection-returning method we should skip over (old behavior).
+                if (i < refPath.size() - 1) {
+                    String next = refPath.get(i + 1);
+
+// JEXL 3 variable paths don't encode call vs. property explicitly.
+// We approximate the old AST-based check by looking at the next name.
+                    if (isSafeCollectionMethod(next)) {
+                        logger.trace("      fCN: Skipping {} because of child method name {}", collectionName, next);
+                        continue; // keep walking the path
                     }
 
+// Numeric access like ".0" (list index) — if your refPath can contain digits,
+// treat it like the old ASTNumberLiteral case.
+                    if (isNumeric(next)) {
+                        logger.trace("      fCN: Numeric index access after collection: {}", next);
+                        continue;
+                    }
+
+// Otherwise, we've found a collection used as a meaningful segment.
                     logger.debug("      fCN: Found collection: \"{}\".", collectionName);
                     return collectionName;
+                } else {
+// No additional segments: expression resolves to a Collection directly.
+                    logger.trace("      fCN: Just a collection: \"{}\".", collectionName);
+                    return null;
                 }
             }
         }
         return null;
+    }
+
+    private static boolean isSafeCollectionMethod(String name) {
+        if (name == null)
+            return false;
+// Mirror the old "family" of safe methods.
+        return name.startsWith("capacity") || name.startsWith("contains") || name.startsWith("element")
+                || name.startsWith("equals") || name.equals("get") // note: does not cover arbitrary getters
+                || name.startsWith("hashCode") || name.startsWith("indexOf") || name.startsWith("isEmpty")
+                || name.startsWith("lastIndexOf") || name.startsWith("size") || name.startsWith("toString");
+    }
+
+    private static boolean isNumeric(String s) {
+        if (s == null || s.isEmpty())
+            return false;
+        for (int i = 0; i < s.length(); i++) {
+            if (!Character.isDigit(s.charAt(i)))
+                return false;
+        }
+        return true;
     }
 
     /**
@@ -273,38 +231,55 @@ public class Expression
     public String getValueIndicatingImplicitCollection(Map<String, Object> beans,
                                                        WorkbookContext context)
     {
-        String expression = myExpression;
-        // Try cache first.
-        String cachedResult = MAP_EXPRESSION_TO_COLL_NAMES.get(expression);
-        if (cachedResult != null)
-        {
-            return cachedResult;
+        
+        final String expression = myExpression;
+
+        // 1) Try cache first.
+        final String cached = MAP_EXPRESSION_TO_COLL_NAMES.get(expression);
+        if (cached != null) {
+            // Preserve your original return contract:
+            // empty string was cached when no collection was found => return null to caller.
+            return cached.isEmpty() ? null : cached;
         }
 
-        Parser parser = new Parser(new StringReader(";"));
-        try
-        {
-            SimpleNode tree = parser.parse(new StringReader(expression), null);
-            List<ASTReference> references = findReferences(tree);
-            for (ASTReference node : references)
-            {
-                logger.trace("  Reference...");
-                String collectionName = findCollectionName(node, beans, context);
-                if (collectionName != null)
-                {
-                    // Cache this result.
-                    MAP_EXPRESSION_TO_COLL_NAMES.put(expression, collectionName);
-                    return collectionName;
+        // 2) Parse using the public JEXL 3 API (no direct Parser/SimpleNode usage).
+        //    Any syntax error will throw JexlException.Parsing.
+        final JexlEngine jexl = context.getExpressionFactory().createJexlEngine();/*  new JexlBuilder()
+                .cache(512)      // tune as you like
+                .silent(true)    // optional
+                .debug(false)    // optional
+                .strict(false)
+                .permissions(...)
+                .create();*/
+        try {
+            // Compile the expression to a script:
+            final JexlScript script = jexl.createScript(expression);
+
+            // 3) Ask JEXL for all variables referenced by the script.
+            //    Each variable is a path like ["foo","bar","baz"] for foo.bar.baz
+            final Set<List<String>> variables = script.getVariables();
+            if (variables != null) {
+                for (List<String> refPath : variables) {
+                    logger.trace("  Reference path: {}", refPath);
+                    // Replace your old AST-based finder with a path-based one:
+                    final String collectionName = findCollectionName(refPath, beans, context);
+                    if (collectionName != null) {
+                        MAP_EXPRESSION_TO_COLL_NAMES.put(expression, collectionName);
+                        return collectionName;
+                    }
                 }
             }
+        } catch (JexlException.Parsing e) {
+            // 4) Map JEXL 3 parsing errors to your domain exception type.
+            throw new ParseException(
+                "JEXL parse error in expression \"" + expression + "\": " + e.getMessage(), e);
         }
-        catch (org.apache.commons.jexl2.parser.ParseException e)
-        {
-            throw new ParseException("JEXL ParseException caught on expression \"" + expression + "\": " + e.getMessage(), e);
-        }
-        // If we get here, then there is no Collection name reference.
+
+        // 5) No collection reference was found: cache sentinel "" and return null (same as before).
         MAP_EXPRESSION_TO_COLL_NAMES.put(expression, "");
         return null;
+        
+       
     }
 
     /**
@@ -351,9 +326,9 @@ public class Expression
         // processing to be a legal expression, e.g. a property access on a List
         // meant to be a property access on an element of the List.  Store the
         // current silent/lenient flags for restoration later.
-        boolean lenient = factory.isLenient();
+        boolean strict = factory.isStrict();
         boolean silent = factory.isSilent();
-        factory.setLenient(true);
+        factory.setStrict(false);
         factory.setSilent(true);
 
         if (value.startsWith(Expression.BEGIN_EXPR) && value.endsWith(Expression.END_EXPR) && expressions.size() == 1)
@@ -383,7 +358,7 @@ public class Expression
         }
 
         // Restore settings.
-        factory.setLenient(lenient);
+        factory.setStrict(strict);
         factory.setSilent(silent);
 
         return implicitCollections;

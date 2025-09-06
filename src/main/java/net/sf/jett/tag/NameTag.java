@@ -144,12 +144,10 @@ public class NameTag extends BaseTag
         boolean preferWorkbookScopeFirst = AttributeUtil.evaluateBoolean(this,
                 attributes.get(ATTR_PREFER_WORKBOOK_SCOPE), beans, false);
 
-        int numNamedRanges = workbook.getNumberOfNames();
         String sheetName = sheet.getSheetName();
         myNamedRange = null;
-        for (int i = 0; i < numNamedRanges; i++)
+        for (Name namedRange : workbook.getAllNames())
         {
-            Name namedRange = workbook.getNameAt(i);
             if (preferWorkbookScopeFirst)
             {
                 if (namedRange.getSheetIndex() == -1 && namedRange.getNameName().equals(name))

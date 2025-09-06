@@ -64,7 +64,7 @@ public class BoldTagListener implements TagListener
                     {
                         Workbook workbook = sheet.getWorkbook();
                         CellStyle style = cell.getCellStyle();
-                        short fontIdx = style.getFontIndex();
+                        int fontIdx = style.getFontIndex();
                         Font font = workbook.getFontAt(fontIdx);
                         if (!font.getBold())
                         {
