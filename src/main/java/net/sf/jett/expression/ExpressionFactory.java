@@ -83,6 +83,10 @@ public class ExpressionFactory
         permissions = JexlPermissions.parse(rules);
         myEngine=null;
     }
+    public void permissions(JexlPermissions p) {
+        permissions = p;
+        myEngine=null;
+    }
     
     public JexlEngine createJexlEngine() {
         return new JexlBuilder().strict(isStrict).debug(isDebug).silent(isSilent).cache(cacheSize).namespaces(myFuncs).permissions(permissions).create();

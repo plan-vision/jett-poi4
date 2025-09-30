@@ -228,8 +228,14 @@ public class MultiForEachTag extends BaseLoopTag
             if (!(items instanceof Collection))
                 throw new TagParseException("One of the items in the \"collections\" attribute is not a Collection in MultiForEach tag found"
                         + getLocation() + ": " + collExpression);
-            Collection<Object> collection = AttributeUtil.evaluateObject(this, collExpression.trim(), beans, ATTR_COLLECTIONS,
-                    Collection.class, null);
+            Object tmp = AttributeUtil.evaluateObject(this, collExpression.trim(), beans, ATTR_COLLECTIONS,Object.class, null);
+            Collection<Object> collection;
+            if (tmp instanceof Object[]) 
+                collection = Arrays.asList((Object[])tmp); 
+             else if (tmp instanceof Collection)
+                 collection = (Collection<Object>)tmp;
+             else 
+                 throw new TagParseException("JETT MultiForEachTag: iteration over Arrays or Collections only, got "+(tmp == null ? "NULL" : tmp.getClass()));
             myCollections.add(collection);
             // Collection names.
             addCollectionName(collExpression);

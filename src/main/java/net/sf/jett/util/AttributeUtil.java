@@ -1,6 +1,7 @@
 package net.sf.jett.util;
 
 import java.util.Arrays;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -588,7 +589,7 @@ public class AttributeUtil
             try
             {
                 Class<T> actualClass = (Class<T>) Class.forName(className);
-                result = actualClass.newInstance();
+                result = actualClass.getDeclaredConstructor().newInstance();
                 if (!expectedClass.isInstance(result))
                 {
                     throw attributeValidationFailure(tag, text, "Expected a \"" + expectedClass.getName() + "\" for \"" +
@@ -600,11 +601,11 @@ public class AttributeUtil
                 throw attributeValidationFailure(tag, text, "Expected a \"" + expectedClass.getName() + "\" for \"" +
                         attrName + "\", could not find class \"" + className + "\"", e);
             }
-            catch (InstantiationException | IllegalAccessException | ClassCastException e)
+            catch (InstantiationException | IllegalAccessException | ClassCastException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException  e)
             {
                 throw attributeValidationFailure(tag, text, "Expected a \"" + expectedClass.getName() + "\" for \"" +
                         attrName + "\", could not instantiate class \"" + className + "\": ", e);
-            }
+            } 
         }
         else
         {

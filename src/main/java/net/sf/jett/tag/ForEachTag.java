@@ -157,8 +157,13 @@ public class ForEachTag extends BaseLoopTag
         Map<String, Object> beans = context.getBeans();
 
         Map<String, RichTextString> attributes = getAttributes();
-        myCollection = AttributeUtil.evaluateObject(this, attributes.get(ATTR_ITEMS), beans, ATTR_ITEMS, Collection.class,
-                new ArrayList<>(0));
+        Object tmp = AttributeUtil.evaluateObject(this, attributes.get(ATTR_ITEMS), beans, ATTR_ITEMS, Object.class,new ArrayList<>(0)); 
+        if (tmp instanceof Object[]) 
+           myCollection = Arrays.asList((Object[])tmp); 
+        else if (tmp instanceof Collection)
+            myCollection = (Collection<Object>)tmp;
+        else 
+            throw new TagParseException("JETT ForEachTag: iteration over Arrays or Collections only, got "+(tmp == null ? "NULL" : tmp.getClass()));
 
         // Collection name.
         String attrItems = attributes.get(ATTR_ITEMS).getString();

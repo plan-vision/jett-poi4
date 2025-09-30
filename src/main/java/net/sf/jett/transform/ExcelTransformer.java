@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
+import org.apache.commons.jexl3.introspection.JexlPermissions;
 import org.apache.logging.log4j.LogManager;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Name;
@@ -784,6 +785,13 @@ public class ExcelTransformer
     private void exposeWorkbook(Map<String, Object> beans, Workbook workbook)
     {
         beans.put("workbook", workbook);
+    }
+    
+    public void permissions(JexlPermissions p) {
+        myExpressionFactory.permissions(p);
+    }
+    public void permissions(String perms[]) {
+        myExpressionFactory.permissions(perms);
     }
 }
 
