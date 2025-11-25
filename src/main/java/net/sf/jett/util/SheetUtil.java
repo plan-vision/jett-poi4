@@ -802,7 +802,7 @@ public class SheetUtil
                         logger.debug("      Updating adjusted merged region from {} to {}.", region, newRegion);
                         sheetMergedRegions.set(i, newRegion);
                     }
-                    else
+                    else if (!sheetMergedRegions.contains(newRegion))
                     {
                         logger.debug("      Copying merged region from {} to {}.", region, newRegion);
                         sheetMergedRegions.add(newRegion);
