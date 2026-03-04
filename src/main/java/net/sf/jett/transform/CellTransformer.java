@@ -194,10 +194,10 @@ public class CellTransformer
     {
         boolean shouldProceed = true;
         List<CellListener> cellListeners = context.getCellListeners();
-        CellEvent event = new CellEvent(cell, beans, oldValue, null);
-        for (CellListener listener : cellListeners)
-        {
-            shouldProceed &= listener.beforeCellProcessed(event);
+        if (!cellListeners.isEmpty()) {
+            CellEvent event = new CellEvent(cell, beans, oldValue, null);
+            for (CellListener listener : cellListeners)
+                shouldProceed &= listener.beforeCellProcessed(event);
         }
         return shouldProceed;
     }
@@ -217,10 +217,10 @@ public class CellTransformer
                                         Object oldValue, Object newValue)
     {
         List<CellListener> cellListeners = context.getCellListeners();
-        CellEvent event = new CellEvent(cell, beans, oldValue, newValue);
-        for (CellListener listener : cellListeners)
-        {
-            listener.cellProcessed(event);
+        if (!cellListeners.isEmpty()) {
+            CellEvent event = new CellEvent(cell, beans, oldValue, newValue);
+            for (CellListener listener : cellListeners)
+                listener.cellProcessed(event);
         }
     }
 
